@@ -1,0 +1,463 @@
+name: Mobile E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'app/**'
+      - 'lib/**'
+      - 'e2e/**'
+      - 'package.json'
+      - '.detoxrc.js'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'app/**'
+      - 'lib/**'
+      - 'e2e/**'
+      - 'package.json'
+      - '.detoxrc.js'
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - smoke
+          - regression
+          - accessibility
+          - performance
+      device_type:
+        description: 'Device type to test'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - ios
+          - android
+      update_baselines:
+        description: 'Update visual regression baselines'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  JAVA_VERSION: '11'
+  XCODE_VERSION: '15.0'
+  ANDROID_API_LEVEL: '33'
+  DETOX_CONFIGURATION: 'ios.sim.release'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      test-matrix: ${{ steps.setup-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup test matrix
+        id: setup-matrix
+        run: |
+          if [ "${{ github.event.inputs.device_type }}" = "ios" ]; then
+            echo "matrix={\"include\":[{\"os\":\"macos-13\",\"platform\":\"ios\",\"config\":\"ios.sim.release\"}]}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.device_type }}" = "android" ]; then
+            echo "matrix={\"include\":[{\"os\":\"ubuntu-latest\",\"platform\":\"android\",\"config\":\"android.emu.release\"}]}" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"include\":[{\"os\":\"macos-13\",\"platform\":\"ios\",\"config\":\"ios.sim.release\"},{\"os\":\"ubuntu-latest\",\"platform\":\"android\",\"config\":\"android.emu.release\"}]}" >> $GITHUB_OUTPUT
+          fi
+
+  ios-e2e-tests:
+    if: ${{ github.event.inputs.device_type != 'android' }}
+    runs-on: macos-13
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        device: ['iPhone 14 Pro', 'iPhone 15 Pro Max', 'iPad Pro (12.9-inch) (6th generation)']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd ios && pod install --repo-update && cd ..
+
+      - name: Setup iOS Simulator
+        run: |
+          xcrun simctl create "TestDevice" "com.apple.CoreSimulator.SimDeviceType.${{ matrix.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-17-0"
+          xcrun simctl boot "TestDevice"
+
+      - name: Build iOS app for testing
+        run: |
+          npx detox build --configuration ios.sim.release
+
+      - name: Run iOS E2E tests
+        run: |
+          npx detox test --configuration ios.sim.release \
+            --device-name "TestDevice" \
+            --artifacts-location ./e2e/artifacts \
+            --record-logs all \
+            --record-videos all \
+            --record-performance all \
+            --take-screenshots all \
+            --headless
+        env:
+          DETOX_DEVICE_NAME: TestDevice
+          TEST_SUITE: ${{ github.event.inputs.test_suite || 'all' }}
+          VISUAL_REGRESSION: true
+          UPDATE_BASELINES: ${{ github.event.inputs.update_baselines || 'false' }}
+
+      - name: Upload iOS test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-e2e-artifacts-${{ matrix.device }}
+          path: |
+            e2e/artifacts/
+            e2e/reports/
+          retention-days: 30
+
+      - name: Upload iOS test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: iOS E2E Tests (${{ matrix.device }})
+          path: e2e/reports/e2e-results.xml
+          reporter: jest-junit
+
+  android-e2e-tests:
+    if: ${{ github.event.inputs.device_type != 'ios' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [30, 33]
+        target: [google_apis]
+        arch: [x86_64]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Cache AVD
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Build Android app for testing
+        run: |
+          cd android
+          ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release
+          cd ..
+
+      - name: Run Android E2E tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            npx detox test --configuration android.emu.release \
+              --artifacts-location ./e2e/artifacts \
+              --record-logs all \
+              --record-videos all \
+              --record-performance all \
+              --take-screenshots all \
+              --headless
+        env:
+          TEST_SUITE: ${{ github.event.inputs.test_suite || 'all' }}
+          VISUAL_REGRESSION: true
+          UPDATE_BASELINES: ${{ github.event.inputs.update_baselines || 'false' }}
+
+      - name: Upload Android test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-e2e-artifacts-api${{ matrix.api-level }}
+          path: |
+            e2e/artifacts/
+            e2e/reports/
+          retention-days: 30
+
+      - name: Upload Android test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Android E2E Tests (API ${{ matrix.api-level }})
+          path: e2e/reports/e2e-results.xml
+          reporter: jest-junit
+
+  accessibility-tests:
+    runs-on: ubuntu-latest
+    needs: [ios-e2e-tests, android-e2e-tests]
+    if: always() && (needs.ios-e2e-tests.result == 'success' || needs.android-e2e-tests.result == 'success')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install accessibility analysis tools
+        run: |
+          npm install -g @axe-core/cli
+          npm install -g pa11y-ci
+
+      - name: Analyze accessibility reports
+        run: |
+          node scripts/analyze-accessibility-reports.js ./artifacts
+
+      - name: Generate accessibility summary
+        run: |
+          node scripts/generate-accessibility-summary.js ./artifacts > accessibility-summary.md
+
+      - name: Upload accessibility summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-summary
+          path: accessibility-summary.md
+
+  performance-analysis:
+    runs-on: ubuntu-latest
+    needs: [ios-e2e-tests, android-e2e-tests]
+    if: always() && (needs.ios-e2e-tests.result == 'success' || needs.android-e2e-tests.result == 'success')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Analyze performance metrics
+        run: |
+          node scripts/analyze-performance-metrics.js ./artifacts
+
+      - name: Generate performance report
+        run: |
+          node scripts/generate-performance-report.js ./artifacts > performance-report.md
+
+      - name: Check performance thresholds
+        run: |
+          node scripts/check-performance-thresholds.js ./artifacts
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: performance-report.md
+
+  visual-regression-analysis:
+    runs-on: ubuntu-latest
+    needs: [ios-e2e-tests, android-e2e-tests]
+    if: always() && (needs.ios-e2e-tests.result == 'success' || needs.android-e2e-tests.result == 'success')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Analyze visual regression results
+        run: |
+          node scripts/analyze-visual-regression.js ./artifacts
+
+      - name: Generate visual regression report
+        run: |
+          node scripts/generate-visual-regression-report.js ./artifacts > visual-regression-report.md
+
+      - name: Update baselines if requested
+        if: ${{ github.event.inputs.update_baselines == 'true' }}
+        run: |
+          node scripts/update-visual-baselines.js ./artifacts
+
+      - name: Upload visual regression report
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-report
+          path: visual-regression-report.md
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [ios-e2e-tests, android-e2e-tests, accessibility-tests, performance-analysis, visual-regression-analysis]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./all-artifacts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate comprehensive test report
+        run: |
+          node scripts/generate-comprehensive-report.js ./all-artifacts > test-summary.md
+
+      - name: Create test summary comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 📱 Mobile E2E Test Results\n\n${summary}`
+            });
+
+      - name: Upload comprehensive test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-test-report
+          path: |
+            test-summary.md
+            ./all-artifacts/
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.eventName === 'push' && context.ref === 'refs/heads/main') {
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Mobile E2E Tests Failed on Main Branch`,
+                body: `Mobile E2E tests failed on the main branch.\n\nCommit: ${context.sha}\nWorkflow: ${context.workflow}\nRun: ${context.runNumber}`,
+                labels: ['bug', 'e2e-failure', 'high-priority']
+              });
+            }
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [test-summary]
+    if: always()
+    
+    steps:
+      - name: Cleanup old artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 30); // Keep artifacts for 30 days
+            
+            for (const artifact of artifacts.data.artifacts) {
+              const createdAt = new Date(artifact.created_at);
+              if (createdAt < cutoffDate && artifact.name.includes('e2e-artifacts')) {
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+                console.log(`Deleted old artifact: ${artifact.name}`);
+              }
+            }

@@ -1,0 +1,613 @@
+{
+  "info": {
+    "name": "BloodLink Africa API",
+    "description": "Comprehensive API collection for BloodLink Africa blood donation management platform",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "request_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has token', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.token).to.exist;",
+                  "    pm.expect(jsonData.data.user).to.exist;",
+                  "    ",
+                  "    // Store token and user ID for subsequent requests",
+                  "    pm.collectionVariables.set('auth_token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('user_id', jsonData.data.user.id);",
+                  "});",
+                  "",
+                  "pm.test('User has required properties', function () {",
+                  "    const user = pm.response.json().data.user;",
+                  "    pm.expect(user).to.have.property('id');",
+                  "    pm.expect(user).to.have.property('name');",
+                  "    pm.expect(user).to.have.property('email');",
+                  "    pm.expect(user).to.have.property('role');",
+                  "    pm.expect(user).to.have.property('blood_type');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"donor@bloodlink.africa\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate user with email and password"
+          }
+        },
+        {
+          "name": "Register Donor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Registration successful', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.user).to.exist;",
+                  "    pm.expect(jsonData.data.message).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securePassword123\",\n  \"role\": \"donor\",\n  \"blood_type\": \"O+\",\n  \"location\": \"Lagos, Nigeria\",\n  \"phone\": \"+2348012345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register new donor account"
+          }
+        },
+        {
+          "name": "Register Hospital",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lagos University Teaching Hospital\",\n  \"email\": \"admin@luth.edu.ng\",\n  \"password\": \"hospitalPassword123\",\n  \"role\": \"hospital\",\n  \"blood_type\": \"O+\",\n  \"location\": \"Lagos, Nigeria\",\n  \"phone\": \"+2348012345679\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register new hospital account"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout current user"
+          }
+        }
+      ],
+      "description": "Authentication endpoints for login, registration, and logout"
+    },
+    {
+      "name": "Blood Requests",
+      "item": [
+        {
+          "name": "Get Blood Requests",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has requests array', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.requests).to.be.an('array');",
+                  "    pm.expect(jsonData.data.pagination).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/blood-requests?page=1&limit=20&blood_type=O+",
+              "host": ["{{base_url}}"],
+              "path": ["blood-requests"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "blood_type",
+                  "value": "O+"
+                }
+              ]
+            },
+            "description": "Get blood requests with filtering and pagination"
+          }
+        },
+        {
+          "name": "Create Blood Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Request created successfully', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.request).to.exist;",
+                  "    pm.expect(jsonData.data.matching_donors).to.be.an('array');",
+                  "    ",
+                  "    // Store request ID for subsequent tests",
+                  "    pm.collectionVariables.set('request_id', jsonData.data.request.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"blood_type\": \"O+\",\n  \"units_needed\": 2,\n  \"urgency\": \"high\",\n  \"location\": \"Lagos University Teaching Hospital\",\n  \"latitude\": 6.5244,\n  \"longitude\": 3.3792,\n  \"notes\": \"Emergency surgery patient needs immediate blood transfusion\",\n  \"patient_age\": 35,\n  \"patient_gender\": \"male\",\n  \"required_by\": \"2025-01-05T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/blood-requests",
+              "host": ["{{base_url}}"],
+              "path": ["blood-requests"]
+            },
+            "description": "Create new blood donation request"
+          }
+        },
+        {
+          "name": "Get Blood Request by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Request details retrieved', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.request).to.exist;",
+                  "    pm.expect(jsonData.data.responses).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/blood-requests/{{request_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["blood-requests", "{{request_id}}"]
+            },
+            "description": "Get specific blood request details"
+          }
+        },
+        {
+          "name": "Update Blood Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"notes\": \"Found matching donors, coordinating donation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/blood-requests/{{request_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["blood-requests", "{{request_id}}"]
+            },
+            "description": "Update existing blood request"
+          }
+        }
+      ],
+      "description": "Blood donation request management endpoints"
+    },
+    {
+      "name": "Donors",
+      "item": [
+        {
+          "name": "Get Donors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/donors?page=1&limit=20&blood_type=O+&available=true&radius=50",
+              "host": ["{{base_url}}"],
+              "path": ["donors"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "blood_type",
+                  "value": "O+"
+                },
+                {
+                  "key": "available",
+                  "value": "true"
+                },
+                {
+                  "key": "radius",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Get donors with filtering"
+          }
+        },
+        {
+          "name": "Respond to Blood Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"request_id\": \"{{request_id}}\",\n  \"status\": \"accepted\",\n  \"estimated_arrival\": \"2025-01-04T10:30:00Z\",\n  \"notes\": \"I can donate immediately and will arrive within 30 minutes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/donors/{{user_id}}/responses",
+              "host": ["{{base_url}}"],
+              "path": ["donors", "{{user_id}}", "responses"]
+            },
+            "description": "Donor responds to blood request"
+          }
+        }
+      ],
+      "description": "Donor management and response endpoints"
+    },
+    {
+      "name": "AI/ML",
+      "item": [
+        {
+          "name": "Find Matching Donors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Matching donors found', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.matches).to.be.an('array');",
+                  "    pm.expect(jsonData.data.algorithm_version).to.exist;",
+                  "    pm.expect(jsonData.data.processing_time).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"request_id\": \"{{request_id}}\",\n  \"max_results\": 10,\n  \"radius\": 25\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/donor-matching",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "donor-matching"]
+            },
+            "description": "Use AI to find best matching donors"
+          }
+        },
+        {
+          "name": "Predict Response Time",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donor_id\": \"{{user_id}}\",\n  \"request_id\": \"{{request_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/predict-response-time",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "predict-response-time"]
+            },
+            "description": "Predict donor response time using ML"
+          }
+        },
+        {
+          "name": "Blood Type Recognition",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "/path/to/blood-test-image.jpg",
+                  "description": "Blood test strip image"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/vision/blood-type-recognition",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "vision", "blood-type-recognition"]
+            },
+            "description": "Recognize blood type from test strip image"
+          }
+        }
+      ],
+      "description": "AI and machine learning endpoints"
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Dashboard Analytics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Analytics data retrieved', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.total_requests).to.be.a('number');",
+                  "    pm.expect(jsonData.data.fulfilled_requests).to.be.a('number');",
+                  "    pm.expect(jsonData.data.active_donors).to.be.a('number');",
+                  "    pm.expect(jsonData.data.response_rate).to.be.a('number');",
+                  "    pm.expect(jsonData.data.blood_type_distribution).to.be.an('object');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/dashboard?period=month&region=Lagos",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "dashboard"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "month"
+                },
+                {
+                  "key": "region",
+                  "value": "Lagos"
+                }
+              ]
+            },
+            "description": "Get dashboard analytics and metrics"
+          }
+        }
+      ],
+      "description": "Analytics and reporting endpoints"
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "API Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('API is healthy', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('healthy');",
+                  "    pm.expect(jsonData.services).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check API health status"
+          }
+        }
+      ],
+      "description": "Health check and monitoring endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('Making request to:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test('Response time is less than 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "pm.test('Response has correct content type', function () {",
+          "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "});"
+        ]
+      }
+    }
+  ]
+}

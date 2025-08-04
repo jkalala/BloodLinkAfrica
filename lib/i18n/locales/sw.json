@@ -1,0 +1,99 @@
+{
+  "auth": {
+    "loginSuccess": "Ingia kufanikiwa",
+    "loginFailed": "Ingia kushindwa",
+    "checkCredentials": "Tafadhali angalia maelezo yako na ujaribu tena",
+    "signInToContinue": "Ingia kuendelea kwenye akaunti yako",
+    "signingIn": "Inaingia...",
+    "noAccount": "Huna akaunti?",
+    "registerNow": "Jiandikishe sasa",
+    "everyDonationCounts": "Kila ufadhili unahesabu",
+    "donationImpact": "Ufadhili wako unaweza kuokoa maisha hadi tatu. Jiunge na jamii yetu ya waokozi leo.",
+    "welcomeBack": "Karibu tena",
+    "signIn": "Ingia",
+    "phoneNumber": "Nambari ya simu",
+    "password": "Nenosiri",
+    "forgotPassword": "Umesahau nenosiri?",
+    "registerDonor": "Huna akaunti?",
+    "register": "Jiandikishe",
+    "joinNetwork": "Jiunge na mtandao wetu wa waokozi wa maisha",
+    "fullName": "Jina kamili",
+    "enterFullName": "Ingiza jina lako kamili",
+    "createPassword": "Unda nenosiri",
+    "confirmPassword": "Thibitisha nenosiri",
+    "bloodType": "Aina ya damu",
+    "selectBloodType": "Chagua aina ya damu",
+    "location": "Mahali",
+    "enterLocation": "Ingiza mahali pako",
+    "allowLocationAccess": "Ruhusu upatikanaji wa mahali",
+    "receiveAlerts": "Pokea arifa",
+    "lastDonation": "Ufadhili wa mwisho",
+    "medicalConditions": "Hali za kiafya",
+    "enterMedicalConditions": "Ingiza hali zako za kiafya",
+    "registrationSuccess": "Usajili umefanikiwa",
+    "verifyPhone": "Tafadhali thibitisha nambari yako ya simu"
+  },
+  "dashboard": {
+    "title": "Dashibodi",
+    "realTime": "Dashibodi ya Wakati Halisi",
+    "phase3": "Uchanganuzi wa Kina",
+    "history": "Historia",
+    "profile": "Wasifu wako",
+    "profileDesc": "Dhibiti wasifu wako wa mfadhili na mapendeleo yako",
+    "bloodRequests": "Maombi ya damu",
+    "bloodRequestsDesc": "Tazama na ujibu maombi ya ufadhili wa damu katika eneo lako"
+  },
+  "errors": {
+    "registrationFailed": "Usajili umeshindwa",
+    "checkInfoAndTryAgain": "Tafadhali angalia maelezo yako na ujaribu tena",
+    "missingInfo": "Maelezo yanayokosekana",
+    "fillRequiredFields": "Tafadhali jaza sehemu zote zinazohitajika",
+    "passwordsDontMatch": "Nenosiri hazifanani",
+    "passwordsMustMatch": "Nenosiri lazima zifanane"
+  },
+  "verification": {
+    "title": "Thibitisha nambari yako ya simu",
+    "description": "Ingiza msimbo wa uthibitisho uliotumwa kwa simu yako",
+    "phoneNumber": "Nambari ya simu",
+    "code": "Msimbo wa uthibitisho",
+    "enterCodePlaceholder": "Ingiza msimbo wa tarakimu 6",
+    "verify": "Thibitisha",
+    "verifying": "Inathibitisha...",
+    "resend": "Tuma tena msimbo",
+    "resendIn": "Tuma tena katika",
+    "codeSent": "Msimbo wa uthibitisho umetumwa",
+    "checkPhone": "Tafadhali angalia simu yako kwa msimbo wa uthibitisho",
+    "sendFailed": "Imeshindwa kutuma msimbo",
+    "missingPhone": "Nambari ya simu inahitajika",
+    "enterPhoneNumber": "Tafadhali ingiza nambari yako ya simu",
+    "missingCode": "Msimbo wa uthibitisho unahitajika",
+    "enterCode": "Tafadhali ingiza msimbo wa uthibitisho",
+    "success": "Uthibitisho umefanikiwa",
+    "phoneVerified": "Nambari yako ya simu imethibitishwa",
+    "failed": "Uthibitisho umeshindwa",
+    "error": "Hitilafu ya uthibitisho",
+    "tryAgain": "Tafadhali jaribu tena"
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "next": "Endelea",
+    "back": "Rudi"
+  },
+  "app": {
+    "name": "BloodLink",
+    "tagline": "Kuunganisha Wafadhili na Wapokeaji",
+    "description": "Unganisha na wafadhili na wapokeaji wa damu katika eneo lako. Kila ufadhili huokoa maisha."
+  },
+  "request": {
+    "title": "Omba damu"
+  },
+  "schedule": {
+    "title": "Ratiba"
+  },
+  "whatsapp": {
+    "title": "WhatsApp"
+  },
+  "ussd": {
+    "title": "USSD"
+  }
+} 

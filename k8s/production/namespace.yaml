@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bloodlink-production
+  labels:
+    name: bloodlink-production
+    environment: production
+    app: bloodlink-africa
+    version: v2.0.0
+  annotations:
+    description: "BloodLink Africa Production Environment"
+    contact: "devops@bloodlink.africa"
+    created-by: "BloodLink DevOps Team"
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: bloodlink-production-quota
+  namespace: bloodlink-production
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: 40Gi
+    limits.cpu: "40"
+    limits.memory: 80Gi
+    persistentvolumeclaims: "20"
+    services: "20"
+    secrets: "50"
+    configmaps: "50"
+    pods: "100"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: bloodlink-production-limits
+  namespace: bloodlink-production
+spec:
+  limits:
+  - default:
+      cpu: "1"
+      memory: "2Gi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "256Mi"
+    type: Container
+  - default:
+      storage: "10Gi"
+    type: PersistentVolumeClaim
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bloodlink-production-network-policy
+  namespace: bloodlink-production
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: bloodlink-production
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+  - from: []
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+  egress:
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: bloodlink-production
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bloodlink-production-sa
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-africa
+    environment: production
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: bloodlink-production
+  name: bloodlink-production-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bloodlink-production-rolebinding
+  namespace: bloodlink-production
+subjects:
+- kind: ServiceAccount
+  name: bloodlink-production-sa
+  namespace: bloodlink-production
+roleRef:
+  kind: Role
+  name: bloodlink-production-role
+  apiGroup: rbac.authorization.k8s.io

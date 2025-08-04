@@ -1,0 +1,37 @@
+{
+  "collection": "docs/api/postman-collection.json",
+  "environment": "tests/api/environments/test.json",
+  "globals": "tests/api/globals.json",
+  "reporters": [
+    "cli",
+    "json",
+    "html",
+    "junit"
+  ],
+  "reporter": {
+    "html": {
+      "export": "./tests/api/reports/newman-report.html",
+      "template": "./tests/api/templates/custom-template.hbs"
+    },
+    "json": {
+      "export": "./tests/api/reports/newman-report.json"
+    },
+    "junit": {
+      "export": "./tests/api/reports/newman-junit.xml"
+    }
+  },
+  "iterationCount": 1,
+  "delayRequest": 100,
+  "timeout": 30000,
+  "timeoutRequest": 10000,
+  "timeoutScript": 5000,
+  "bail": false,
+  "suppressExitCode": false,
+  "color": "auto",
+  "verbose": true,
+  "insecure": false,
+  "ignoreRedirects": false,
+  "folder": [],
+  "workingDir": "./tests/api/data",
+  "cookieJar": "./tests/api/cookies.json"
+}

@@ -1,0 +1,1050 @@
+
+> my-v0-project@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.18.26:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.5s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 2.6s (228 modules)
+✅ Environment variables loaded for development
+Redis not configured, falling back to memory store
+Creating server component Supabase client
+ ○ Compiling /[locale] ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (108kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /[locale] in 13.6s (1001 modules)
+ ✓ Compiled in 1348ms (441 modules)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD / 200 in 17393ms
+ ○ Compiling /[locale]/dashboard ...
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /dashboard 200 in 8938ms
+Loaded 0 ML models
+📍 Initialized 0 geofences
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET / 200 in 785ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /en/login 200 in 5705ms
+ GET /dashboard 200 in 152ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /real-time-dashboard 200 in 4336ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /service-worker.js 404 in 2633ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /map 200 in 4958ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /request 200 in 8386ms
+ GET /request 200 in 106ms
+ GET /request 200 in 249ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /requests 200 in 7374ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ POST /requests 200 in 896ms
+ POST /requests 200 in 620ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 7465ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 4885ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 1369ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+Creating server-side Supabase client
+ GET /notifications 200 in 1221ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+Creating server-side Supabase client
+ GET /notifications 200 in 768ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /notifications 200 in 171ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 339ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 4031ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 175ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /notifications 200 in 1474ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD / 200 in 1746ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 1240ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-form.tsx
+./app/[locale]/request/page.tsx
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 410ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 975ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /dashboard 200 in 5080ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 649ms
+📍 Initialized 0 geofences
+Loaded 0 ML models
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /request 200 in 143ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /map 200 in 235ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 249ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /notifications 200 in 2635ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /notifications 200 in 121ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-form.tsx
+./app/[locale]/request/page.tsx
+ GET /notifications 200 in 133ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-form.tsx
+./app/[locale]/request/page.tsx
+ GET /notifications 200 in 78ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-form.tsx
+./app/[locale]/request/page.tsx
+ GET /notifications 200 in 230ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 1246ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 984ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 207ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /dashboard 200 in 4707ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /request 200 in 446ms
+Loaded 0 ML models
+📍 Initialized 0 geofences
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /notifications 200 in 167ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 568ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 586ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /notifications 200 in 233ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD / 200 in 3428ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /dashboard 200 in 3622ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /notifications 200 in 253ms
+📍 Initialized 0 geofences
+Loaded 0 ML models
+ GET /dashboard 200 in 180ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 5928ms
+ GET /profile 200 in 90ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 626ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 528ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 190ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD / 200 in 3673ms
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /dashboard 200 in 364ms
+Loaded 0 ML models
+📍 Initialized 0 geofences
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 429ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 144ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 373ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 138ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 281ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 101ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /login 200 in 3971ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 625ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /register 200 in 8376ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ HEAD /notifications 200 in 240ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /profile 200 in 81ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET / 200 in 4891ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /en/login 200 in 933ms
+ GET /dashboard 200 in 118ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ GET /map 200 in 3494ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 664ms
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+ ⚠ ./lib/performance-monitoring.ts
+Module not found: Can't resolve 'fs' in '/Users/joaquimkalala/Desktop/BloodLinkAfrica/BloodConnectv0/lib'
+
+Import trace for requested module:
+./lib/performance-monitoring.ts
+./lib/enhanced-blood-request-service.ts
+./components/enhanced-blood-request-dashboard.tsx
+./app/[locale]/dashboard/page.tsx
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 9644ms
+ GET /map 200 in 268ms
+   Reload env: .env.local
+ ✓ Compiled /_not-found in 53.5s (1753 modules)
+ GET /map 200 in 366ms
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (108kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 932ms
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 178ms
+ ✓ Compiled in 3.7s (1521 modules)
+ GET /map 200 in 271ms
+ ✓ Compiled in 2.7s (1521 modules)
+ GET /map 200 in 321ms
+ ✓ Compiled in 2.8s (1519 modules)
+ GET /map 200 in 730ms
+ ✓ Compiled in 2.4s (1519 modules)
+ GET /map 200 in 213ms
+ ✓ Compiled in 1172ms (1519 modules)
+ GET /map 200 in 191ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 918ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 7s (1509 modules)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 7337ms
+ ✓ Compiled in 3.1s (1519 modules)
+ GET /map 200 in 370ms
+ ✓ Compiled in 1270ms (1519 modules)
+ GET /map 200 in 560ms
+ ✓ Compiled in 1064ms (1519 modules)
+ GET /map 200 in 268ms
+ ✓ Compiled in 2.1s (1519 modules)
+ GET /map 200 in 154ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 1257ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 9.5s (1509 modules)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 9892ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 644ms
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 145ms
+ ✓ Compiled in 4s (1519 modules)
+ GET /map 200 in 574ms
+ ✓ Compiled in 2.4s (1519 modules)
+ GET /map 200 in 298ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 939ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 7.3s (1509 modules)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 7512ms
+ ✓ Compiled in 1260ms (1523 modules)
+ GET /map 200 in 223ms
+ ✓ Compiled in 1993ms (1523 modules)
+ GET /map 200 in 274ms
+ ✓ Compiled in 1914ms (1523 modules)
+ GET /map 200 in 205ms
+ ✓ Compiled in 1087ms (1523 modules)
+ GET /map 200 in 266ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 485ms
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 357ms
+ ✓ Compiled in 3.2s (1523 modules)
+ GET /map 200 in 277ms
+ ✓ Compiled in 1529ms (1519 modules)
+ GET /map 200 in 276ms
+ ✓ Compiled in 1823ms (1519 modules)
+ GET /map 200 in 248ms
+ ✓ Compiled in 1038ms (1519 modules)
+ GET /map 200 in 238ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 624ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.2s (1509 modules)
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 3178ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /map 200 in 632ms
+Creating server-side Supabase client
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 142ms
+ ○ Compiling /[locale]/request ...
+ ✓ Compiled /[locale]/request in 4.9s (799 modules)
+ GET /request 200 in 5344ms
+ ○ Compiling /[locale]/real-time-dashboard ...
+ ✓ Compiled /[locale]/real-time-dashboard in 1416ms (777 modules)
+ GET /real-time-dashboard 200 in 1610ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /service-worker.js 404 in 746ms
+ GET /profile 200 in 140ms
+ ○ Compiling /[locale]/dashboard ...
+ ✓ Compiled /[locale]/dashboard in 1439ms (802 modules)
+ GET /dashboard 200 in 1740ms
+ GET /dashboard 200 in 206ms
+ GET /real-time-dashboard 200 in 88ms
+ ○ Compiling /[locale]/phase3-dashboard ...
+ ✓ Compiled /[locale]/phase3-dashboard in 8.1s (1652 modules)
+ GET /phase3-dashboard 200 in 12609ms
+ GET /phase3-dashboard 200 in 97ms
+✅ Environment variables loaded for development
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+Loaded 0 ML models
+ POST /phase3-dashboard 200 in 1639ms
+ POST /phase3-dashboard 200 in 2419ms
+ POST /phase3-dashboard 200 in 1827ms
+ POST /phase3-dashboard 200 in 1097ms
+ POST /phase3-dashboard 200 in 2265ms
+ POST /phase3-dashboard 200 in 1715ms
+🤖 Finding optimal donors for request sample-request-id
+No compatible donors found
+🚨 CRITICAL MEMORY USAGE: {
+  route: 'ai-matching',
+  method: 'FIND_DONORS',
+  memoryMB: '865MB',
+  threshold: '200MB'
+}
+ POST /phase3-dashboard 200 in 319ms
+🤖 Finding optimal donors for request sample-request-id
+No compatible donors found
+🚨 CRITICAL MEMORY USAGE: {
+  route: 'ai-matching',
+  method: 'FIND_DONORS',
+  memoryMB: '868MB',
+  threshold: '200MB'
+}
+ POST /phase3-dashboard 200 in 362ms
+ GET /map 200 in 87ms
+ GET /real-time-dashboard 200 in 101ms
+ GET /dashboard 200 in 126ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.5s (1646 modules)
+ GET /dashboard/whatsapp 404 in 2875ms
+✅ Environment variables loaded for development
+Creating server-side Supabase client
+ GET /dashboard/whatsapp 404 in 663ms
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server component Supabase client
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /dashboard 200 in 1025ms
+📍 Initialized 0 geofences
+Loaded 0 ML models
+ GET /dashboard/ussd 404 in 34ms
+Creating server-side Supabase client
+ GET /dashboard/ussd 404 in 131ms
+Creating server-side Supabase client
+Creating server-side Supabase client
+ GET /dashboard 200 in 110ms
+ ○ Compiling /[locale]/request ...
+ ✓ Compiled /[locale]/request in 603ms (932 modules)
+ GET /request 200 in 773ms
+ GET /request 200 in 121ms
+ GET /dashboard 200 in 213ms
+ GET /dashboard 200 in 54ms
+ GET /dashboard 200 in 77ms
+ GET /dashboard 200 in 70ms
+ GET /map 200 in 107ms
+ ✓ Compiled in 3.4s (735 modules)
+ ✓ Compiled in 18.8s (1656 modules)
+ ✓ Compiled in 7.9s (1656 modules)
+ ✓ Compiled in 5.7s (1656 modules)
+ ✓ Compiled in 1508ms (1656 modules)
+ ✓ Compiled in 2s (1656 modules)
+ ✓ Compiled in 642ms (735 modules)
+ ✓ Compiled in 1365ms (1656 modules)
+ ✓ Compiled in 2.5s (1656 modules)
+ ✓ Compiled in 5.2s (1656 modules)
+ ✓ Compiled in 1279ms (1656 modules)
+ ✓ Compiled in 23.9s (1656 modules)
+ ✓ Compiled in 10.7s (1656 modules)
+ ✓ Compiled in 4.1s (1656 modules)
+ ✓ Compiled in 4.8s (1656 modules)
+ ✓ Compiled in 5.1s (1656 modules)
+ ✓ Compiled in 8.4s (1656 modules)
+ ✓ Compiled in 4.4s (1656 modules)
+ ✓ Compiled in 15s (1656 modules)
+ ✓ Compiled in 5.7s (1656 modules)
+ ✓ Compiled in 5.1s (1656 modules)
+ ✓ Compiled in 8.1s (1656 modules)
+ ✓ Compiled in 3.9s (1656 modules)
+ ✓ Compiled in 5.7s (1656 modules)
+ ✓ Compiled in 4.8s (1656 modules)
+ ✓ Compiled in 4.6s (1656 modules)
+ ✓ Compiled in 3.1s (1656 modules)
+ ✓ Compiled in 5.4s (1656 modules)
+ ✓ Compiled in 4.6s (735 modules)
+ ✓ Compiled in 3.8s (735 modules)
+ ✓ Compiled in 971ms (735 modules)
+ ✓ Compiled in 1295ms (735 modules)
+ ✓ Compiled in 794ms (735 modules)
+ ✓ Compiled in 900ms (735 modules)
+ ✓ Compiled in 766ms (735 modules)
+ ✓ Compiled in 655ms (735 modules)
+ ✓ Compiled in 525ms (735 modules)
+ ✓ Compiled in 6.6s (1656 modules)
+ ✓ Compiled in 3.2s (1884 modules)
+ ✓ Compiled in 3.7s (1884 modules)
+ ✓ Compiled in 1360ms (1656 modules)
+ ✓ Compiled in 1134ms (1656 modules)
+ ✓ Compiled in 915ms (1656 modules)
+ ✓ Compiled in 1147ms (1656 modules)
+ ✓ Compiled in 2.7s (1656 modules)
+ ✓ Compiled in 4.6s (1656 modules)

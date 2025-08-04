@@ -1,0 +1,99 @@
+{
+  "auth": {
+    "loginSuccess": "Connexion réussie",
+    "loginFailed": "Échec de la connexion",
+    "checkCredentials": "Veuillez vérifier vos identifiants et réessayer",
+    "signInToContinue": "Connectez-vous pour continuer vers votre compte",
+    "signingIn": "Connexion en cours...",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "registerNow": "Inscrivez-vous maintenant",
+    "everyDonationCounts": "Chaque don compte",
+    "donationImpact": "Votre don peut sauver jusqu'à trois vies. Rejoignez notre communauté de sauveurs aujourd'hui.",
+    "welcomeBack": "Bon retour",
+    "signIn": "Se connecter",
+    "phoneNumber": "Numéro de téléphone",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "registerDonor": "Vous n'avez pas de compte ?",
+    "register": "S'inscrire",
+    "joinNetwork": "Rejoignez notre réseau de sauveurs de vies",
+    "fullName": "Nom complet",
+    "enterFullName": "Entrez votre nom complet",
+    "createPassword": "Créer un mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "bloodType": "Groupe sanguin",
+    "selectBloodType": "Sélectionner le groupe sanguin",
+    "location": "Emplacement",
+    "enterLocation": "Entrez votre emplacement",
+    "allowLocationAccess": "Autoriser l'accès à la localisation",
+    "receiveAlerts": "Recevoir les alertes",
+    "lastDonation": "Dernier don",
+    "medicalConditions": "Conditions médicales",
+    "enterMedicalConditions": "Entrez vos conditions médicales",
+    "registrationSuccess": "Inscription réussie",
+    "verifyPhone": "Veuillez vérifier votre numéro de téléphone"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "realTime": "Tableau de bord en temps réel",
+    "phase3": "Analyses Avancées",
+    "history": "Historique",
+    "profile": "Votre Profil",
+    "profileDesc": "Gérez votre profil de donneur et vos préférences",
+    "bloodRequests": "Demandes de sang",
+    "bloodRequestsDesc": "Voir et répondre aux demandes de don de sang dans votre région"
+  },
+  "errors": {
+    "registrationFailed": "Échec de l'inscription",
+    "checkInfoAndTryAgain": "Veuillez vérifier vos informations et réessayer",
+    "missingInfo": "Informations manquantes",
+    "fillRequiredFields": "Veuillez remplir tous les champs obligatoires",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+    "passwordsMustMatch": "Les mots de passe doivent correspondre"
+  },
+  "verification": {
+    "title": "Vérifiez votre numéro de téléphone",
+    "description": "Entrez le code de vérification envoyé à votre téléphone",
+    "phoneNumber": "Numéro de téléphone",
+    "code": "Code de vérification",
+    "enterCodePlaceholder": "Entrez le code à 6 chiffres",
+    "verify": "Vérifier",
+    "verifying": "Vérification...",
+    "resend": "Renvoyer le code",
+    "resendIn": "Renvoyer dans",
+    "codeSent": "Code de vérification envoyé",
+    "checkPhone": "Veuillez vérifier votre téléphone pour le code de vérification",
+    "sendFailed": "Échec de l'envoi du code",
+    "missingPhone": "Numéro de téléphone requis",
+    "enterPhoneNumber": "Veuillez entrer votre numéro de téléphone",
+    "missingCode": "Code de vérification requis",
+    "enterCode": "Veuillez entrer le code de vérification",
+    "success": "Vérification réussie",
+    "phoneVerified": "Votre numéro de téléphone a été vérifié",
+    "failed": "Échec de la vérification",
+    "error": "Erreur de vérification",
+    "tryAgain": "Veuillez réessayer"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "next": "Suivant",
+    "back": "Retour"
+  },
+  "app": {
+    "name": "BloodLink",
+    "tagline": "Connecter les Donneurs aux Receveurs",
+    "description": "Connectez-vous avec des donneurs et des receveurs de sang dans votre région. Chaque don sauve des vies."
+  },
+  "request": {
+    "title": "Demander du sang"
+  },
+  "schedule": {
+    "title": "Planifier"
+  },
+  "whatsapp": {
+    "title": "WhatsApp"
+  },
+  "ussd": {
+    "title": "USSD"
+  }
+} 

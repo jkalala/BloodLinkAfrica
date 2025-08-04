@@ -1,0 +1,401 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bloodlink-frontend
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+    version: v2.0.0
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    description: "BloodLink Africa Frontend Application"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: bloodlink-frontend
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: bloodlink-frontend
+        component: frontend
+        environment: production
+        version: v2.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: bloodlink-production-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: bloodlink-frontend
+        image: bloodlink/frontend:v2.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        - name: REACT_APP_API_URL
+          value: "https://api.bloodlink.africa"
+        - name: REACT_APP_WS_URL
+          value: "wss://api.bloodlink.africa"
+        - name: REACT_APP_CDN_URL
+          value: "https://cdn.bloodlink.africa"
+        - name: REACT_APP_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: bloodlink-secrets
+              key: sentry-dsn
+        - name: REACT_APP_GOOGLE_ANALYTICS_ID
+          valueFrom:
+            secretKeyRef:
+              name: bloodlink-secrets
+              key: google-analytics-id
+        - name: REACT_APP_MAPBOX_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bloodlink-secrets
+              key: mapbox-token
+        - name: REACT_APP_PUSHER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bloodlink-secrets
+              key: pusher-key
+        - name: REACT_APP_ENVIRONMENT
+          value: "production"
+        - name: REACT_APP_VERSION
+          value: "v2.0.0"
+        - name: REACT_APP_BUILD_DATE
+          value: "2024-01-15T10:00:00Z"
+        envFrom:
+        - configMapRef:
+            name: bloodlink-frontend-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 30
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: nginx-run
+          mountPath: /var/run
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+          readOnly: true
+      - name: nginx-exporter
+        image: nginx/nginx-prometheus-exporter:0.10.0
+        args:
+        - -nginx.scrape-uri=http://localhost:3000/nginx_status
+        ports:
+        - name: metrics
+          containerPort: 9113
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-type: frontend
+      tolerations:
+      - key: "frontend"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - bloodlink-frontend
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bloodlink-frontend-service
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9113"
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: metrics
+    port: 9113
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: bloodlink-frontend
+    component: frontend
+  sessionAffinity: None
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: bloodlink-frontend-hpa
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: bloodlink-frontend
+  minReplicas: 3
+  maxReplicas: 15
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Max
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bloodlink-frontend-pdb
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: bloodlink-frontend
+      component: frontend
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+data:
+  default.conf: |
+    upstream backend {
+        server bloodlink-api-service.bloodlink-production.svc.cluster.local:80;
+    }
+    
+    server {
+        listen 3000;
+        server_name _;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-src 'none';" always;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+        
+        # Static files
+        location /static/ {
+            alias /app/build/static/;
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+        
+        # API proxy
+        location /api/ {
+            proxy_pass http://backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 30s;
+            proxy_send_timeout 30s;
+            proxy_read_timeout 30s;
+        }
+        
+        # Health checks
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+        
+        location /ready {
+            access_log off;
+            return 200 "ready\n";
+            add_header Content-Type text/plain;
+        }
+        
+        location /nginx_status {
+            stub_status on;
+            access_log off;
+            allow 127.0.0.1;
+            deny all;
+        }
+        
+        # React app
+        location / {
+            root /app/build;
+            try_files $uri $uri/ /index.html;
+            expires 1h;
+            add_header Cache-Control "public";
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bloodlink-frontend-config
+  namespace: bloodlink-production
+  labels:
+    app: bloodlink-frontend
+    component: frontend
+    environment: production
+data:
+  REACT_APP_FEATURE_FLAGS: "donor-matching,real-time-notifications,advanced-analytics"
+  REACT_APP_THEME: "default"
+  REACT_APP_LANGUAGE: "en"
+  REACT_APP_TIMEZONE: "Africa/Lagos"
+  REACT_APP_MAX_FILE_SIZE: "10485760"
+  REACT_APP_SUPPORTED_FORMATS: "jpg,jpeg,png,pdf"
+  REACT_APP_SESSION_TIMEOUT: "1800000"
+  REACT_APP_REFRESH_INTERVAL: "300000"

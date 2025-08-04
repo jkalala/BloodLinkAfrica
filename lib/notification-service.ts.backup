@@ -1,0 +1,826 @@
+import { createServerSupabaseClient } from "./supabase"
+import { performanceMonitor } from './performance-monitoring'
+import { websocketService } from './websocket-service'
+import { twilioService } from './twilio-service'
+import { whatsappService } from './whatsapp-service'
+import { pushNotificationService } from './push-notification-service'
+
+export interface Notification {
+  id: string
+  user_id: string
+  notification_type: string
+  title: string
+  message: string
+  data?: any
+  status: string
+  created_at: string
+  sent_at?: string
+  delivery_attempts?: number
+  channels?: string[]
+  priority: 'low' | 'normal' | 'high' | 'critical'
+}
+
+export interface NotificationAlert {
+  type: 'blood_request' | 'emergency' | 'donor_match' | 'status_update' | 'reminder' | 'system'
+  title: string
+  message: string
+  recipients: string[]
+  priority: 'low' | 'normal' | 'high' | 'critical'
+  channels: string[]
+  data?: Record<string, any>
+  scheduled_at?: string
+  expires_at?: string
+}
+
+export interface NotificationPreferences {
+  user_id: string
+  push_notifications: boolean
+  sms_notifications: boolean
+  email_notifications: boolean
+  call_notifications: boolean
+  emergency_only: boolean
+  quiet_hours_start?: string
+  quiet_hours_end?: string
+  blood_request_alerts: boolean
+  donation_reminders: boolean
+  system_updates: boolean
+}
+
+export class NotificationService {
+  private supabase = createServerSupabaseClient()
+
+  /**
+   * Create a notification for a user
+   */
+  async createNotification(notification: Omit<Notification, 'id' | 'status' | 'created_at'>): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabase
+        .from('notification_queue')
+        .insert({
+          user_id: notification.user_id,
+          notification_type: notification.notification_type,
+          title: notification.title,
+          message: notification.message,
+          data: notification.data || {},
+          status: 'pending'
+        })
+
+      if (error) {
+        console.error('Error creating notification:', error)
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error in createNotification:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Get notifications for a user
+   */
+  async getUserNotifications(userId: string): Promise<{ success: boolean; data?: Notification[]; error?: string }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('notification_queue')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true, data }
+    } catch (error: any) {
+      console.error('Error in getUserNotifications:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Mark notification as read
+   */
+  async markNotificationAsRead(notificationId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabase
+        .from('notification_queue')
+        .update({ status: 'delivered' })
+        .eq('id', notificationId)
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error in markNotificationAsRead:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send comprehensive alert with multiple notification channels
+   */
+  async sendAlert(alertData: NotificationAlert): Promise<{ success: boolean; sent: number; failed: number; error?: string }> {
+    const tracker = performanceMonitor.startTracking('send-alert', 'POST')
+    
+    try {
+      console.log(`📢 Sending ${alertData.type} alert to ${alertData.recipients.length} recipients via ${alertData.channels.join(', ')}`)
+      
+      let sent = 0
+      let failed = 0
+      const errors: string[] = []
+      
+      // Get recipient preferences and user data
+      const { data: users, error: usersError } = await this.supabase
+        .from('user_profiles')
+        .select(`
+          id,
+          user_id,
+          notification_preferences,
+          users!user_profiles_user_id_fkey (
+            name,
+            phone,
+            email
+          )
+        `)
+        .in('user_id', alertData.recipients)
+      
+      if (usersError) {
+        throw new Error(`Failed to fetch users: ${usersError.message}`)
+      }
+      
+      for (const user of users || []) {
+        try {
+          const preferences = user.notification_preferences || {}
+          const userData = user.users as any
+          
+          // Check if user should receive this notification
+          if (!this.shouldSendNotification(alertData, preferences)) {
+            continue
+          }
+          
+          // Filter channels based on user preferences and urgency
+          const enabledChannels = this.getEnabledChannels(alertData.channels, preferences, alertData.priority)
+          
+          if (enabledChannels.length === 0) {
+            continue
+          }
+          
+          // Create notification record
+          const { data: notification, error: notificationError } = await this.supabase
+            .from('notification_queue')
+            .insert({
+              user_id: user.user_id,
+              notification_type: alertData.type,
+              title: alertData.title,
+              message: alertData.message,
+              data: alertData.data || {},
+              status: 'pending',
+              priority: alertData.priority,
+              channels: enabledChannels,
+              scheduled_at: alertData.scheduled_at,
+              expires_at: alertData.expires_at
+            })
+            .select()
+            .single()
+          
+          if (notificationError) {
+            errors.push(`Failed to create notification for user ${user.user_id}: ${notificationError.message}`)
+            failed++
+            continue
+          }
+          
+          // Send through enabled channels
+          const channelResults = await Promise.allSettled(
+            enabledChannels.map(channel => 
+              this.sendThroughChannel(
+                channel,
+                {
+                  title: alertData.title,
+                  message: alertData.message,
+                  data: alertData.data || {},
+                  priority: alertData.priority
+                },
+                {
+                  id: user.user_id,
+                  name: userData?.name || 'User',
+                  phone: userData?.phone,
+                  email: userData?.email
+                }
+              )
+            )
+          )
+          
+          // Update notification status based on channel results
+          const successfulChannels = channelResults
+            .map((result, index) => ({ result, channel: enabledChannels[index] }))
+            .filter(({ result }) => result.status === 'fulfilled')
+            .map(({ channel }) => channel)
+          
+          if (successfulChannels.length > 0) {
+            await this.supabase
+              .from('notification_queue')
+              .update({
+                status: 'sent',
+                sent_at: new Date().toISOString(),
+                successful_channels: successfulChannels
+              })
+              .eq('id', notification.id)
+            
+            sent++
+          } else {
+            await this.supabase
+              .from('notification_queue')
+              .update({
+                status: 'failed',
+                delivery_attempts: 1,
+                error_details: channelResults.map((r, i) => 
+                  r.status === 'rejected' ? `${enabledChannels[i]}: ${r.reason}` : null
+                ).filter(Boolean)
+              })
+              .eq('id', notification.id)
+            
+            failed++
+          }
+          
+        } catch (error) {
+          console.error(`Error sending notification to user ${user.user_id}:`, error)
+          errors.push(`User ${user.user_id}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          failed++
+        }
+      }
+      
+      // Send real-time updates via WebSocket
+      if (alertData.type === 'blood_request' || alertData.type === 'emergency') {
+        websocketService.broadcast('notification:alert', {
+          type: alertData.type,
+          priority: alertData.priority,
+          recipients: alertData.recipients.length,
+          timestamp: new Date().toISOString()
+        })
+      }
+      
+      console.log(`✅ Alert sent: ${sent} successful, ${failed} failed`)
+      tracker.end(200)
+      
+      return {
+        success: true,
+        sent,
+        failed,
+        error: errors.length > 0 ? errors.join('; ') : undefined
+      }
+      
+    } catch (error) {
+      console.error('Error in sendAlert:', error)
+      tracker.end(500)
+      return {
+        success: false,
+        sent: 0,
+        failed: 0,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    }
+  }
+
+  /**
+   * Send blood request notification to compatible donors
+   */
+  async sendBloodRequestNotification(
+    requestId: string,
+    bloodType: string,
+    hospital: string,
+    location: string,
+    donors: Array<{ id: string; name: string; distance: number }>
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const notifications = donors.map(donor => ({
+        user_id: donor.id,
+        notification_type: 'blood_request' as const,
+        title: `Blood Request - ${bloodType}`,
+        message: `${bloodType} blood needed at ${hospital}. Distance: ${donor.distance.toFixed(1)}km. Can you help?`,
+        data: {
+          request_id: requestId,
+          blood_type: bloodType,
+          hospital: hospital,
+          location: location,
+          distance: donor.distance
+        }
+      }))
+
+      const { error } = await this.supabase
+        .from('notification_queue')
+        .insert(notifications)
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error in sendBloodRequestNotification:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send donor match notification
+   */
+  async sendDonorMatchNotification(
+    requestId: string,
+    donorId: string,
+    donorName: string,
+    bloodType: string,
+    hospital: string
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Get the request creator's user ID
+      const { data: request } = await this.supabase
+        .from('blood_requests')
+        .select('contact_phone')
+        .eq('id', requestId)
+        .single()
+
+      if (!request) {
+        return { success: false, error: "Request not found" }
+      }
+
+      // Find the user by phone number
+      const { data: user } = await this.supabase
+        .from('users')
+        .select('id')
+        .eq('phone', request.contact_phone)
+        .single()
+
+      if (!user) {
+        return { success: false, error: "Request creator not found" }
+      }
+
+      const notification = {
+        user_id: user.id,
+        notification_type: 'donor_match' as const,
+        title: 'Donor Found! 🎉',
+        message: `${donorName} has accepted your blood request for ${bloodType} at ${hospital}`,
+        data: {
+          request_id: requestId,
+          donor_id: donorId,
+          donor_name: donorName,
+          blood_type: bloodType,
+          hospital: hospital
+        }
+      }
+
+      const { error } = await this.supabase
+        .from('notification_queue')
+        .insert(notification)
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error in sendDonorMatchNotification:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send donation reminder
+   */
+  async sendDonationReminder(userId: string, userName: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const notification = {
+        user_id: userId,
+        notification_type: 'reminder' as const,
+        title: 'Donation Reminder 💝',
+        message: `Hi ${userName}, you're eligible to donate blood again! Your donation can save up to 3 lives.`,
+        data: {
+          type: 'donation_reminder',
+          message: 'You can donate again'
+        }
+      }
+
+      const { error } = await this.supabase
+        .from('notification_queue')
+        .insert(notification)
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error in sendDonationReminder:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Process pending notifications with retry logic
+   */
+  async processPendingNotifications(): Promise<{ success: boolean; processed: number; retried: number; error?: string }> {
+    const tracker = performanceMonitor.startTracking('process-notifications', 'POST')
+    
+    try {
+      // Get pending and failed notifications for retry
+      const { data: notifications, error: fetchError } = await this.supabase
+        .from('notification_queue')
+        .select(`
+          *,
+          user_profiles!notification_queue_user_id_fkey (
+            notification_preferences,
+            users!user_profiles_user_id_fkey (
+              name,
+              phone,
+              email
+            )
+          )
+        `)
+        .or('status.eq.pending,and(status.eq.failed,delivery_attempts.lt.3)')
+        .order('priority', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(100)
+
+      if (fetchError) {
+        tracker.end(500)
+        return { success: false, processed: 0, retried: 0, error: fetchError.message }
+      }
+
+      if (!notifications || notifications.length === 0) {
+        tracker.end(200)
+        return { success: true, processed: 0, retried: 0 }
+      }
+
+      let processed = 0
+      let retried = 0
+      
+      for (const notification of notifications) {
+        try {
+          const userProfile = notification.user_profiles as any
+          const userData = userProfile?.users
+          
+          if (!userData) {
+            // Mark as failed - user not found
+            await this.supabase
+              .from('notification_queue')
+              .update({ 
+                status: 'failed',
+                error_details: ['User not found']
+              })
+              .eq('id', notification.id)
+            continue
+          }
+          
+          const isRetry = notification.status === 'failed'
+          if (isRetry) retried++
+          
+          const preferences = userProfile.notification_preferences || {}
+          const enabledChannels = this.getEnabledChannels(
+            notification.channels || ['push'], 
+            preferences, 
+            notification.priority
+          )
+          
+          if (enabledChannels.length === 0) {
+            await this.supabase
+              .from('notification_queue')
+              .update({ 
+                status: 'skipped',
+                error_details: ['No enabled channels']
+              })
+              .eq('id', notification.id)
+            continue
+          }
+          
+          // Send through channels
+          const channelResults = await Promise.allSettled(
+            enabledChannels.map(channel => 
+              this.sendThroughChannel(
+                channel,
+                {
+                  title: notification.title,
+                  message: notification.message,
+                  data: notification.data || {},
+                  priority: notification.priority
+                },
+                {
+                  id: notification.user_id,
+                  name: userData.name || 'User',
+                  phone: userData.phone,
+                  email: userData.email
+                }
+              )
+            )
+          )
+          
+          const successfulChannels = channelResults
+            .map((result, index) => ({ result, channel: enabledChannels[index] }))
+            .filter(({ result }) => result.status === 'fulfilled')
+            .map(({ channel }) => channel)
+          
+          if (successfulChannels.length > 0) {
+            await this.supabase
+              .from('notification_queue')
+              .update({
+                status: 'sent',
+                sent_at: new Date().toISOString(),
+                successful_channels: successfulChannels,
+                delivery_attempts: (notification.delivery_attempts || 0) + 1
+              })
+              .eq('id', notification.id)
+            
+            processed++
+          } else {
+            const attempts = (notification.delivery_attempts || 0) + 1
+            await this.supabase
+              .from('notification_queue')
+              .update({
+                status: attempts >= 3 ? 'failed' : 'pending',
+                delivery_attempts: attempts,
+                error_details: channelResults.map((r, i) => 
+                  r.status === 'rejected' ? `${enabledChannels[i]}: ${r.reason}` : null
+                ).filter(Boolean),
+                next_retry_at: attempts < 3 ? new Date(Date.now() + (attempts * 5 * 60 * 1000)).toISOString() : null
+              })
+              .eq('id', notification.id)
+          }
+          
+        } catch (error) {
+          console.error('Error processing notification:', notification.id, error)
+        }
+      }
+
+      console.log(`📱 Processed ${processed} notifications, retried ${retried}`)
+      tracker.end(200)
+      return { success: true, processed, retried }
+      
+    } catch (error: any) {
+      console.error('Error in processPendingNotifications:', error)
+      tracker.end(500)
+      return { success: false, processed: 0, retried: 0, error: error.message }
+    }
+  }
+
+  /**
+   * Send notification through specific channel
+   */
+  private async sendThroughChannel(
+    channel: string,
+    notification: {
+      title: string
+      message: string
+      data: Record<string, any>
+      priority: string
+    },
+    user: {
+      id: string
+      name: string
+      phone?: string
+      email?: string
+    }
+  ): Promise<boolean> {
+    switch (channel) {
+      case 'push':
+        return await pushNotificationService.sendPushNotification(
+          user.id,
+          notification.title,
+          notification.message,
+          notification.data
+        )
+      
+      case 'sms':
+        if (!user.phone) throw new Error('No phone number available')
+        const smsResult = await twilioService.sendSMS(
+          user.phone,
+          `${notification.title}\n\n${notification.message}`
+        )
+        return smsResult.success
+      
+      case 'whatsapp':
+        if (!user.phone) throw new Error('No phone number available')
+        const whatsappResult = await whatsappService.sendMessage(
+          user.phone,
+          notification.message,
+          'template',
+          notification.data
+        )
+        return whatsappResult.success
+      
+      case 'email':
+        if (!user.email) throw new Error('No email address available')
+        // Email service would go here
+        console.log(`📧 Email notification sent to ${user.email}`)
+        return true
+      
+      case 'call':
+        if (!user.phone) throw new Error('No phone number available')
+        const callResult = await twilioService.makeCall(
+          user.phone,
+          `Emergency blood request. ${notification.message}. Please respond immediately.`
+        )
+        return callResult.success
+      
+      default:
+        throw new Error(`Unsupported channel: ${channel}`)
+    }
+  }
+  
+  /**
+   * Check if user should receive notification based on preferences
+   */
+  private shouldSendNotification(
+    alert: NotificationAlert,
+    preferences: any
+  ): boolean {
+    // Always send emergency notifications
+    if (alert.priority === 'critical' || alert.type === 'emergency') {
+      return true
+    }
+    
+    // Check if user wants this type of notification
+    switch (alert.type) {
+      case 'blood_request':
+        return preferences.blood_request_alerts !== false
+      case 'reminder':
+        return preferences.donation_reminders !== false
+      case 'system':
+        return preferences.system_updates !== false
+      default:
+        return true
+    }
+  }
+  
+  /**
+   * Get enabled notification channels based on preferences and priority
+   */
+  private getEnabledChannels(
+    requestedChannels: string[],
+    preferences: any,
+    priority: string
+  ): string[] {
+    const enabledChannels: string[] = []
+    
+    for (const channel of requestedChannels) {
+      let enabled = false
+      
+      switch (channel) {
+        case 'push':
+          enabled = preferences.push_notifications !== false
+          break
+        case 'sms':
+          enabled = preferences.sms_notifications !== false
+          break
+        case 'email':
+          enabled = preferences.email_notifications !== false
+          break
+        case 'whatsapp':
+          enabled = preferences.whatsapp_notifications !== false
+          break
+        case 'call':
+          enabled = preferences.call_notifications !== false
+          break
+        default:
+          enabled = true
+      }
+      
+      // Override for critical/emergency notifications
+      if ((priority === 'critical' || priority === 'high') && ['push', 'sms', 'call'].includes(channel)) {
+        enabled = true
+      }
+      
+      if (enabled) {
+        enabledChannels.push(channel)
+      }
+    }
+    
+    return enabledChannels
+  }
+  
+  /**
+   * Update user notification preferences
+   */
+  async updateNotificationPreferences(
+    userId: string,
+    preferences: Partial<NotificationPreferences>
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabase
+        .from('user_profiles')
+        .update({
+          notification_preferences: preferences
+        })
+        .eq('user_id', userId)
+      
+      if (error) {
+        return { success: false, error: error.message }
+      }
+      
+      return { success: true }
+    } catch (error: any) {
+      console.error('Error updating notification preferences:', error)
+      return { success: false, error: error.message }
+    }
+  }
+  
+  /**
+   * Get user notification preferences
+   */
+  async getNotificationPreferences(
+    userId: string
+  ): Promise<{ success: boolean; data?: NotificationPreferences; error?: string }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('user_profiles')
+        .select('notification_preferences')
+        .eq('user_id', userId)
+        .single()
+      
+      if (error) {
+        return { success: false, error: error.message }
+      }
+      
+      return { success: true, data: data?.notification_preferences }
+    } catch (error: any) {
+      console.error('Error getting notification preferences:', error)
+      return { success: false, error: error.message }
+    }
+  }
+  
+  /**
+   * Get notification statistics
+   */
+  async getNotificationStats(
+    userId?: string,
+    days: number = 30
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+      let query = this.supabase
+        .from('notification_queue')
+        .select('status, notification_type, priority, created_at, successful_channels')
+        .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString())
+      
+      if (userId) {
+        query = query.eq('user_id', userId)
+      }
+      
+      const { data, error } = await query
+      
+      if (error) {
+        return { success: false, error: error.message }
+      }
+      
+      // Calculate statistics
+      const stats = {
+        total_sent: data?.filter(n => n.status === 'sent').length || 0,
+        total_failed: data?.filter(n => n.status === 'failed').length || 0,
+        total_pending: data?.filter(n => n.status === 'pending').length || 0,
+        by_type: {},
+        by_priority: {},
+        by_channel: {},
+        success_rate: 0
+      }
+      
+      if (data && data.length > 0) {
+        // Group by type
+        for (const notification of data) {
+          if (!stats.by_type[notification.notification_type]) {
+            stats.by_type[notification.notification_type] = 0
+          }
+          stats.by_type[notification.notification_type]++
+          
+          if (!stats.by_priority[notification.priority]) {
+            stats.by_priority[notification.priority] = 0
+          }
+          stats.by_priority[notification.priority]++
+          
+          // Count successful channels
+          if (notification.successful_channels) {
+            for (const channel of notification.successful_channels) {
+              if (!stats.by_channel[channel]) {
+                stats.by_channel[channel] = 0
+              }
+              stats.by_channel[channel]++
+            }
+          }
+        }
+        
+        stats.success_rate = (stats.total_sent / data.length) * 100
+      }
+      
+      return { success: true, data: stats }
+    } catch (error: any) {
+      console.error('Error getting notification stats:', error)
+      return { success: false, error: error.message }
+    }
+  }
+}
+
+// Export singleton instance
+export const notificationService = new NotificationService()
+
+// Export getter function for consistency with other services
+export const getNotificationService = () => notificationService 

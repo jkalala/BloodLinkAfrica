@@ -1,0 +1,97 @@
+{
+  "id": "test-environment",
+  "name": "BloodLink Africa API Test Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "description": "Base URL for the API",
+      "enabled": true
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "description": "JWT authentication token",
+      "enabled": true
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "description": "JWT refresh token",
+      "enabled": true
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "description": "Current user ID",
+      "enabled": true
+    },
+    {
+      "key": "donorId",
+      "value": "",
+      "description": "Test donor ID",
+      "enabled": true
+    },
+    {
+      "key": "appointmentId",
+      "value": "",
+      "description": "Test appointment ID",
+      "enabled": true
+    },
+    {
+      "key": "testEmail",
+      "value": "test@bloodlink.africa",
+      "description": "Test user email",
+      "enabled": true
+    },
+    {
+      "key": "testPassword",
+      "value": "TestPassword123!",
+      "description": "Test user password",
+      "enabled": true
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@bloodlink.africa",
+      "description": "Admin user email",
+      "enabled": true
+    },
+    {
+      "key": "adminPassword",
+      "value": "AdminPassword123!",
+      "description": "Admin user password",
+      "enabled": true
+    },
+    {
+      "key": "timestamp",
+      "value": "",
+      "description": "Current timestamp for unique data",
+      "enabled": true
+    },
+    {
+      "key": "apiVersion",
+      "value": "v2",
+      "description": "API version",
+      "enabled": true
+    },
+    {
+      "key": "timeout",
+      "value": "10000",
+      "description": "Request timeout in milliseconds",
+      "enabled": true
+    },
+    {
+      "key": "retryCount",
+      "value": "3",
+      "description": "Number of retries for failed requests",
+      "enabled": true
+    },
+    {
+      "key": "rateLimit",
+      "value": "1000",
+      "description": "Rate limit per hour",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

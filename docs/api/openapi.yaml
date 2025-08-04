@@ -1,0 +1,1146 @@
+openapi: 3.0.3
+info:
+  title: BloodLink Africa API
+  description: |
+    Comprehensive blood donation management API for BloodLink Africa platform.
+    
+    ## Features
+    - Blood donation request management
+    - Donor matching with AI/ML algorithms
+    - Real-time notifications and updates
+    - Multi-language support (EN, FR, PT, SW)
+    - Advanced security with JWT authentication
+    - Role-based access control (RBAC)
+    
+    ## Authentication
+    All endpoints require JWT authentication via Bearer token in Authorization header.
+    
+    ## Rate Limiting
+    - 1000 requests per hour for authenticated users
+    - 100 requests per hour for unauthenticated users
+    
+    ## Error Handling
+    All errors follow RFC 7807 Problem Details format.
+    
+  version: 2.0.0
+  contact:
+    name: BloodLink Africa API Support
+    email: api-support@bloodlink.africa
+    url: https://docs.bloodlink.africa
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.bloodlink.africa/v2
+    description: Production server
+  - url: https://staging-api.bloodlink.africa/v2
+    description: Staging server
+  - url: http://localhost:3000/api
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Authentication Endpoints
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "donor@bloodlink.africa"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "securePassword123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refreshToken:
+                        type: string
+                        example: "refresh_token_here"
+                      expiresIn:
+                        type: integer
+                        example: 3600
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: User registration
+      description: Register new user account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - role
+                - blood_type
+                - location
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "securePassword123"
+                role:
+                  type: string
+                  enum: [donor, hospital, admin]
+                  example: "donor"
+                blood_type:
+                  $ref: '#/components/schemas/BloodType'
+                location:
+                  type: string
+                  example: "Lagos, Nigeria"
+                phone:
+                  type: string
+                  pattern: '^\+[1-9]\d{1,14}$'
+                  example: "+2348012345678"
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      message:
+                        type: string
+                        example: "Registration successful. Please verify your email."
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # Blood Request Endpoints
+  /blood-requests:
+    get:
+      tags:
+        - Blood Requests
+      summary: Get blood requests
+      description: Retrieve blood requests with filtering and pagination
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: blood_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/BloodType'
+        - name: urgency
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, critical]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, in_progress, fulfilled, cancelled]
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: Search radius in kilometers
+          schema:
+            type: number
+            minimum: 1
+            maximum: 500
+            default: 50
+      responses:
+        '200':
+          description: Blood requests retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      requests:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BloodRequest'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Blood Requests
+      summary: Create blood request
+      description: Create new blood donation request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - blood_type
+                - units_needed
+                - urgency
+                - location
+              properties:
+                blood_type:
+                  $ref: '#/components/schemas/BloodType'
+                units_needed:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  example: 2
+                urgency:
+                  type: string
+                  enum: [low, medium, high, critical]
+                  example: "high"
+                location:
+                  type: string
+                  example: "Lagos University Teaching Hospital"
+                latitude:
+                  type: number
+                  format: float
+                  minimum: -90
+                  maximum: 90
+                  example: 6.5244
+                longitude:
+                  type: number
+                  format: float
+                  minimum: -180
+                  maximum: 180
+                  example: 3.3792
+                notes:
+                  type: string
+                  maxLength: 1000
+                  example: "Emergency surgery patient needs immediate blood transfusion"
+                patient_age:
+                  type: integer
+                  minimum: 0
+                  maximum: 150
+                  example: 35
+                patient_gender:
+                  type: string
+                  enum: [male, female, other]
+                  example: "male"
+                required_by:
+                  type: string
+                  format: date-time
+                  example: "2025-01-05T10:00:00Z"
+      responses:
+        '201':
+          description: Blood request created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      request:
+                        $ref: '#/components/schemas/BloodRequest'
+                      matching_donors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DonorMatch'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /blood-requests/{id}:
+    get:
+      tags:
+        - Blood Requests
+      summary: Get blood request by ID
+      description: Retrieve specific blood request details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Blood request retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      request:
+                        $ref: '#/components/schemas/BloodRequest'
+                      responses:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DonorResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Blood Requests
+      summary: Update blood request
+      description: Update existing blood request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [active, in_progress, fulfilled, cancelled]
+                notes:
+                  type: string
+                  maxLength: 1000
+                units_needed:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                urgency:
+                  type: string
+                  enum: [low, medium, high, critical]
+      responses:
+        '200':
+          description: Blood request updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      request:
+                        $ref: '#/components/schemas/BloodRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Blood Requests
+      summary: Delete blood request
+      description: Delete blood request (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Blood request deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Blood request deleted successfully"
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        role:
+          type: string
+          enum: [donor, hospital, admin]
+          example: "donor"
+        blood_type:
+          $ref: '#/components/schemas/BloodType'
+        location:
+          type: string
+          example: "Lagos, Nigeria"
+        phone:
+          type: string
+          example: "+2348012345678"
+        verified:
+          type: boolean
+          example: true
+        available:
+          type: boolean
+          example: true
+        last_donation:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-12-01T10:00:00Z"
+        total_donations:
+          type: integer
+          example: 5
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-04T12:00:00Z"
+
+    BloodType:
+      type: string
+      enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+      example: "O+"
+
+    BloodRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        requester_id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174001"
+        blood_type:
+          $ref: '#/components/schemas/BloodType'
+        units_needed:
+          type: integer
+          example: 2
+        urgency:
+          type: string
+          enum: [low, medium, high, critical]
+          example: "high"
+        status:
+          type: string
+          enum: [active, in_progress, fulfilled, cancelled]
+          example: "active"
+        location:
+          type: string
+          example: "Lagos University Teaching Hospital"
+        latitude:
+          type: number
+          format: float
+          example: 6.5244
+        longitude:
+          type: number
+          format: float
+          example: 3.3792
+        notes:
+          type: string
+          nullable: true
+          example: "Emergency surgery patient"
+        patient_age:
+          type: integer
+          nullable: true
+          example: 35
+        patient_gender:
+          type: string
+          enum: [male, female, other]
+          nullable: true
+          example: "male"
+        required_by:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-01-05T10:00:00Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-04T08:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-01-04T08:00:00Z"
+
+    DonorMatch:
+      type: object
+      properties:
+        donor_id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174002"
+        donor_name:
+          type: string
+          example: "Jane Smith"
+        blood_type:
+          $ref: '#/components/schemas/BloodType'
+        compatibility_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        distance:
+          type: number
+          format: float
+          example: 2.5
+        response_rate:
+          type: number
+          format: float
+          example: 0.85
+        avg_response_time:
+          type: integer
+          description: Average response time in minutes
+          example: 30
+        last_donation:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-11-15T10:00:00Z"
+        available:
+          type: boolean
+          example: true
+
+    DonorResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174003"
+        donor_id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174002"
+        request_id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        status:
+          type: string
+          enum: [pending, accepted, declined, completed]
+          example: "accepted"
+        estimated_arrival:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-01-04T10:30:00Z"
+        notes:
+          type: string
+          nullable: true
+          example: "I can donate immediately"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-04T08:15:00Z"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 150
+        pages:
+          type: integer
+          example: 8
+        has_next:
+          type: boolean
+          example: true
+        has_prev:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              example: "Validation failed"
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: "email"
+                  message:
+                    type: string
+                    example: "Invalid email format"
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "UNAUTHORIZED"
+              message: "Authentication required"
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "FORBIDDEN"
+              message: "Insufficient permissions"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "NOT_FOUND"
+              message: "Resource not found"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "CONFLICT"
+              message: "Email already exists"
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Validation failed"
+              details:
+                - field: "email"
+                  message: "Invalid email format"
+                - field: "password"
+                  message: "Password must be at least 8 characters"
+
+  # Donor Endpoints
+  /donors:
+    get:
+      tags:
+        - Donors
+      summary: Get donors
+      description: Retrieve donors with filtering and pagination
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: blood_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/BloodType'
+        - name: available
+          in: query
+          schema:
+            type: boolean
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: Search radius in kilometers
+          schema:
+            type: number
+            minimum: 1
+            maximum: 500
+            default: 50
+      responses:
+        '200':
+          description: Donors retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      donors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+
+  /donors/{id}/responses:
+    post:
+      tags:
+        - Donors
+      summary: Respond to blood request
+      description: Donor responds to a blood donation request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - request_id
+                - status
+              properties:
+                request_id:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                status:
+                  type: string
+                  enum: [accepted, declined]
+                  example: "accepted"
+                estimated_arrival:
+                  type: string
+                  format: date-time
+                  example: "2025-01-04T10:30:00Z"
+                notes:
+                  type: string
+                  maxLength: 500
+                  example: "I can donate immediately"
+      responses:
+        '201':
+          description: Response recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      response:
+                        $ref: '#/components/schemas/DonorResponse'
+
+  # AI/ML Endpoints
+  /ai/donor-matching:
+    post:
+      tags:
+        - AI/ML
+      summary: Find matching donors
+      description: Use AI to find best matching donors for a blood request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - request_id
+              properties:
+                request_id:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                max_results:
+                  type: integer
+                  minimum: 1
+                  maximum: 50
+                  default: 10
+                  example: 10
+                radius:
+                  type: number
+                  minimum: 1
+                  maximum: 500
+                  default: 50
+                  example: 25
+      responses:
+        '200':
+          description: Matching donors found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      matches:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DonorMatch'
+                      algorithm_version:
+                        type: string
+                        example: "v2.1.0"
+                      processing_time:
+                        type: number
+                        format: float
+                        example: 0.245
+
+  /ai/predict-response-time:
+    post:
+      tags:
+        - AI/ML
+      summary: Predict donor response time
+      description: Predict how quickly a donor will respond to a request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - donor_id
+                - request_id
+              properties:
+                donor_id:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174002"
+                request_id:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: Response time predicted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      predicted_response_time:
+                        type: integer
+                        description: Predicted response time in minutes
+                        example: 25
+                      confidence:
+                        type: number
+                        format: float
+                        minimum: 0
+                        maximum: 1
+                        example: 0.87
+                      factors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            factor:
+                              type: string
+                              example: "time_of_day"
+                            weight:
+                              type: number
+                              format: float
+                              example: 0.3
+
+  # Computer Vision Endpoints
+  /ai/vision/blood-type-recognition:
+    post:
+      tags:
+        - AI/ML
+      summary: Recognize blood type from image
+      description: Use computer vision to recognize blood type from test strip image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Blood test strip image (JPEG, PNG, WebP)
+      responses:
+        '200':
+          description: Blood type recognized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      blood_type:
+                        $ref: '#/components/schemas/BloodType'
+                      confidence:
+                        type: number
+                        format: float
+                        minimum: 0
+                        maximum: 1
+                        example: 0.95
+                      image_quality:
+                        type: string
+                        enum: [poor, fair, good, excellent]
+                        example: "good"
+                      processing_time:
+                        type: number
+                        format: float
+                        example: 1.23
+                      alternative_predictions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            blood_type:
+                              $ref: '#/components/schemas/BloodType'
+                            confidence:
+                              type: number
+                              format: float
+                              example: 0.15
+
+  # Analytics Endpoints
+  /analytics/dashboard:
+    get:
+      tags:
+        - Analytics
+      summary: Get dashboard analytics
+      description: Retrieve key metrics for dashboard
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year]
+            default: month
+        - name: region
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analytics data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      total_requests:
+                        type: integer
+                        example: 1250
+                      fulfilled_requests:
+                        type: integer
+                        example: 1100
+                      active_donors:
+                        type: integer
+                        example: 5000
+                      response_rate:
+                        type: number
+                        format: float
+                        example: 0.88
+                      avg_response_time:
+                        type: number
+                        format: float
+                        example: 32.5
+                      blood_type_distribution:
+                        type: object
+                        properties:
+                          "O+":
+                            type: integer
+                            example: 450
+                          "A+":
+                            type: integer
+                            example: 320
+                          "B+":
+                            type: integer
+                            example: 280
+                          "AB+":
+                            type: integer
+                            example: 150
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Blood Requests
+    description: Blood donation request management
+  - name: Donors
+    description: Donor management and matching
+  - name: AI/ML
+    description: AI and machine learning endpoints
+  - name: Notifications
+    description: Real-time notifications
+  - name: Analytics
+    description: Analytics and reporting

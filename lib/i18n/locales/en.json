@@ -1,0 +1,99 @@
+{
+  "auth": {
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "checkCredentials": "Please check your credentials and try again",
+    "signInToContinue": "Sign in to continue to your account",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "registerNow": "Register now",
+    "everyDonationCounts": "Every donation counts",
+    "donationImpact": "Your donation can save up to three lives. Join our community of lifesavers today.",
+    "welcomeBack": "Welcome back",
+    "signIn": "Sign in",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "registerDonor": "Don't have an account?",
+    "register": "Register",
+    "joinNetwork": "Join our lifesaving network",
+    "fullName": "Full Name",
+    "enterFullName": "Enter your full name",
+    "createPassword": "Create a password",
+    "confirmPassword": "Confirm Password",
+    "bloodType": "Blood Type",
+    "selectBloodType": "Select blood type",
+    "location": "Location",
+    "enterLocation": "Enter your location",
+    "allowLocationAccess": "Allow location access",
+    "receiveAlerts": "Receive alerts",
+    "lastDonation": "Last Donation",
+    "medicalConditions": "Medical Conditions",
+    "enterMedicalConditions": "Enter any medical conditions",
+    "registrationSuccess": "Registration successful",
+    "verifyPhone": "Please verify your phone number"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "realTime": "Real-time Dashboard",
+    "phase3": "Advanced Analytics",
+    "history": "History",
+    "profile": "Your Profile",
+    "profileDesc": "Manage your donor profile and preferences",
+    "bloodRequests": "Blood Requests",
+    "bloodRequestsDesc": "View and respond to blood donation requests in your area"
+  },
+  "errors": {
+    "registrationFailed": "Registration failed",
+    "checkInfoAndTryAgain": "Please check your information and try again",
+    "missingInfo": "Missing Information",
+    "fillRequiredFields": "Please fill in all required fields",
+    "passwordsDontMatch": "Passwords don't match",
+    "passwordsMustMatch": "Passwords must match"
+  },
+  "verification": {
+    "title": "Verify your phone number",
+    "description": "Enter the verification code sent to your phone",
+    "phoneNumber": "Phone number",
+    "code": "Verification code",
+    "enterCodePlaceholder": "Enter 6-digit code",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "resend": "Resend code",
+    "resendIn": "Resend in",
+    "codeSent": "Verification code sent",
+    "checkPhone": "Please check your phone for the verification code",
+    "sendFailed": "Failed to send code",
+    "missingPhone": "Phone number required",
+    "enterPhoneNumber": "Please enter your phone number",
+    "missingCode": "Verification code required",
+    "enterCode": "Please enter the verification code",
+    "success": "Verification successful",
+    "phoneVerified": "Your phone number has been verified",
+    "failed": "Verification failed",
+    "error": "Verification error",
+    "tryAgain": "Please try again"
+  },
+  "common": {
+    "loading": "Loading...",
+    "next": "Next",
+    "back": "Back"
+  },
+  "app": {
+    "name": "BloodLink",
+    "tagline": "Connect Donors with Recipients",
+    "description": "Connect with blood donors and recipients in your area. Every donation saves lives."
+  },
+  "request": {
+    "title": "Request Blood"
+  },
+  "schedule": {
+    "title": "Schedule"
+  },
+  "whatsapp": {
+    "title": "WhatsApp"
+  },
+  "ussd": {
+    "title": "USSD"
+  }
+} 

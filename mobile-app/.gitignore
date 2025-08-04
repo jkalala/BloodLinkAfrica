@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Jest
+coverage/
+
+# Android
+.gradle/
+build/
+
+# iOS
+build/
+Pods/
+
+# Misc
+.DS_Store
+*.js.map
+*.bundle
